@@ -45,7 +45,7 @@ apiRouter.put(endpoint + 'produtos/:id', (req, res) => {
 
 apiRouter.delete(endpoint + 'produtos/:id', (req, res) => { 
   const id = req.params.id;
-  knex('produto').where({id})
+  knex('produto').where({id}).delete()
   .then(deleted => res.status(204).json(deleted))
   .catch(err => res.status(500).json({ message: 'Erro ao deletar produto - ' + err.message }))
 }) 
