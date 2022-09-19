@@ -11,43 +11,52 @@ const knex = require('knex')({
 let apiRouter = express.Router()  
 const endpoint = '/'
  
-apiRouter.get (endpoint + 'produtos', function (req, res) { 
-  knex.select('*').from('produto') 
-  .then( produtos => res.status(200).json(produtos) ) 
+apiRouter.get (endpoint + 'clientes', function (req, res) { 
+  knex.select('*').from('cliente') 
+  .then( clientes => res.status(200).json(clientes) ) 
   .catch(err => { 
-    res.status(500).json({ message: 'Erro ao recuperar produtos - ' + err.message }) 
+    res.status(500).json({ message: 'Erro ao recuperar clientes - ' + err.message }) 
   })   
 })
 
-apiRouter.get(endpoint + 'produtos/:id', (req, res) => { 
+apiRouter.get(endpoint + 'clientes/:id', (req, res) => { 
   const id = req.params.id;
-  knex.select('*').from('produto').where({id}).first()
-  .then(produto => res.status(200).json(produto))
-  .catch(err => res.status(500).json({ message: 'Erro ao recuperar produto - ' + err.message }))
+  if (id < 1) {
+    return res.status(500).json({ message: 'ID Inválido'})
+  }
+  knex.select('*').from('cliente').where({id}).first()
+  .then(cliente => res.status(200).json(cliente))
+  .catch(err => res.status(404).json({ message: 'Cliente não encontrado - ' + err.message }))
 }) 
 
-apiRouter.post(endpoint + 'produtos', (req, res) => { 
-  const produto = req.body;
-  knex('produto').insert(produto)
-  .then(produto => res.status(201).json(produto))
-  .catch(err => res.status(500).json({ message: 'Erro ao inserir produto - ' + err.message }))
+apiRouter.post(endpoint + 'clientes', (req, res) => { 
+  const cliente = req.body;
+  knex('cliente').insert(cliente, ['id', 'nome'])
+  .then(cliente => res.status(201).json(cliente))
+  .catch(err => res.status(500).json({ message: 'Erro ao inserir cliente - ' + err.message }))
 }) 
 
-apiRouter.put(endpoint + 'produtos/:id', (req, res) => { 
+apiRouter.put(endpoint + 'clientes/:id', (req, res) => { 
   const id = req.params.id;
-  const produto = req.body;
-  knex('produto')
+  const cliente = req.body;
+  if (id < 1) {
+    return res.status(500).json({ message: 'ID Inválido'})
+  }
+  knex('cliente')
   .where({id})
-  .update(produto)
+  .update(cliente)
   .then(p => res.status(200).json(p))
-  .catch(err => res.status(500).json({ message: 'Erro ao atualizar produto - ' + err.message }))
+  .catch(err => res.status(500).json({ message: 'Erro ao atualizar cliente - ' + err.message }))
 }) 
 
-apiRouter.delete(endpoint + 'produtos/:id', (req, res) => { 
+apiRouter.delete(endpoint + 'clientes/:id', (req, res) => { 
   const id = req.params.id;
-  knex('produto').where({id}).delete()
+  if (id < 1) {
+    return res.status(500).json({ message: 'ID Inválido'})
+  }
+  knex('cliente').where({id}).delete()
   .then(deleted => res.status(204).json(deleted))
-  .catch(err => res.status(500).json({ message: 'Erro ao deletar produto - ' + err.message }))
+  .catch(err => res.status(500).json({ message: 'Erro ao deletar cliente - ' + err.message }))
 }) 
  
 module.exports = apiRouter; 
