@@ -28,7 +28,7 @@ apiRouter.get(endpoint + 'produtos/:id', (req, res) => {
 
 apiRouter.post(endpoint + 'produtos', (req, res) => { 
   const produto = req.body;
-  knex('produto').insert(produto)
+  knex('produto').insert(produto, ['id', 'nome', 'valor'])
   .then(produto => res.status(201).json(produto))
   .catch(err => res.status(500).json({ message: 'Erro ao inserir produto - ' + err.message }))
 }) 
